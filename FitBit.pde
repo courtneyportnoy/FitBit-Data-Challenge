@@ -16,7 +16,7 @@ HashMap<String, FitBitDay> fitbitHash = new HashMap();
 
 
 void setup() {
-  size(400, 400);
+  size(800, 600);
   smooth();
   background(0);
   for (int i = 0; i < days.length; i++) {
@@ -72,7 +72,6 @@ void findWalks(String thisDay) {
   ArrayList walks = new ArrayList();
   for (int i = 0; i < l.size(); i++) {
     MinuteObject m = l.get(i);
-
     //if current steps is greater than 0, user is walking
     if (m.steps > 0) {
       counter++;
@@ -85,10 +84,15 @@ void findWalks(String thisDay) {
     try { 
 
       if (m.steps == 0 && l.get(i-1).steps > 0 && l.get(i+1).steps == 0 && 
-        l.get(i+2).steps == 0 && l.get(i+3).steps == 0 && l.get(i+4).steps == 0) {
+        l.get(i+2).steps == 0 && l.get(i+3).steps == 0 && l.get(i+4).steps == 0 && l.get(i+5).steps == 0) {
 
         if (counter >= 10) {
+          print("i = " + i + " " + (i-1) + " " + (i+1) + " " + (i+2) + " " + (i+3)+" "+(i+4)+" "+(i+5)+" ");
+          println("count = " + counter);
+          println();
+
           FitBitObject fb = new FitBitObject();
+          fb.startingPoint = i - counter;
           fb.minutes = counter;
           fb.steps = steps;
           fb.calories = calories;
@@ -96,7 +100,7 @@ void findWalks(String thisDay) {
           d.fitbitList.add(fb);
           //fitbitList.add(fb);
           walks.add(counter);
-        }
+        } 
         counter = 0;
         steps = 0;
         calories = 0;
@@ -122,8 +126,23 @@ void findWalks(String thisDay) {
 
 void renderDay(String thisDay) {
   FitBitDay d = fitbitHash.get(thisDay);
+  ArrayList<MinuteObject> l = fitbitHash.get(thisDay).minuteList;
+  //for (FitBitObject fb:d.fitbitList) {
+  FitBitObject fb = d.fitbitList.get(1);
+  int startPoint = fb.startingPoint;
+  int endPoint = startPoint + fb.minutes;
+  println(startPoint + " - " + endPoint);
+  int inc = 1;
+  for (int j = startPoint; j < endPoint; j++) {
+    fill(255, 0, 0);
+    rect(15*inc, height - 100, 10, -l.get(j).steps*(5));
+    inc++;
+  }
+
+  //println("S = " + s);
+  //}
+
   fill(255);
-  //textFont("helvetica", 24);
   text("Summary for " + thisDay.toUpperCase(), 20, 20);
   text("Total Calories Burned: " + d.totalCalories, 20, 60);
   text("Total Steps Taken: " + d.totalSteps, 20, 100);
